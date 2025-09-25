@@ -117,13 +117,6 @@ const UsersSection = () => {
         }
     };
 
-    const handleEditUser = (userData) => {
-        // Navigate to edit page with user data
-        console.log("Edit user:", userData);
-        // You can implement navigation to edit page here
-        alert(`Edit functionality for ${userData.email} would open here`);
-    };
-
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -158,7 +151,7 @@ const UsersSection = () => {
     return (
         <div className="w-full p-6">
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
                 <p className="text-gray-600">Manage your team members and their permissions</p>
             </div>
@@ -246,7 +239,7 @@ const UsersSection = () => {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-lg w-8xl border border-gray-200 overflow-x-auto shadow-sm">
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-white uppercase bg-gradient-to-r from-blue-600 to-blue-700">
                         <tr>
