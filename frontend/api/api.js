@@ -6,6 +6,7 @@ const API_URL = "https://multi-tenancy-backend-production.up.railway.app";
 const api = axios.create({
   baseURL: API_URL, // ✅ relative path for Vercel
   headers: { "Content-Type": "application/json" },
+  withCredentials: true 
 });
 
 export const setAuthToken = (token) => {
