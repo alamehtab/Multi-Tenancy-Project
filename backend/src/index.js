@@ -18,6 +18,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.options("*", cors()); // handle preflight for all routes
+
 // ✅ Routes
 app.use("/auth", authRoutes);
 app.use("/notes", notesRoutes);
