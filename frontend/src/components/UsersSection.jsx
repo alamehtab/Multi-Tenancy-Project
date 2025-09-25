@@ -14,7 +14,7 @@ const UsersSection = () => {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [deleteLoading, setDeleteLoading] = useState(null);
-    const usersPerPage = 10;
+    const usersPerPage = 5;
     const navigate=useNavigate()
 
     useEffect(() => {

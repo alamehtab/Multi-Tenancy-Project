@@ -6,7 +6,6 @@ import {
   X,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
 import UsersSection from "../components/UsersSection";
 import AddUserPage from "./AddUserPage";
 import EditUserPage from "./EditUserPage";
@@ -160,13 +159,13 @@ export default function NotesPage() {
               Notes
             </button>
             <div className="hidden md:flex items-center gap-4">
-              <button
+              {/* <button
                 onClick={() => setSidebarOpen((v) => !v)}
                 className="p-2 rounded hover:bg-gray-100 transition"
                 aria-label="Toggle sidebar"
               >
                 {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
+              </button> */}
               <Link to="/noteslist" className="hover:underline">
                 Notes
               </Link>
