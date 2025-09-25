@@ -1,7 +1,7 @@
 // src/api/api.js
 import axios from "axios";
 
-const API_URL = "/api";
+const API_URL = "https://multi-tenancy-backend-production.up.railway.app";
 
 const api = axios.create({
   baseURL: API_URL, // ✅ relative path for Vercel
