@@ -7,4 +7,4 @@ import api from "./api";
  * @param {Object} credentials - { email, password }
  * @returns {Promise<{ token: string, user: object }>}
  */
-export const loginUser = (credentials) => api.post("auth/login", credentials);
+export const loginUser = (credentials) => api.post("/auth/login", credentials);
