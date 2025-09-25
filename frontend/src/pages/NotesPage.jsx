@@ -241,7 +241,7 @@ export default function NotesPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* DESKTOP SIDEBAR */}
-        <div
+        {/* <div
           className={`hidden md:block bg-gray-100 transition-all duration-300 ease-in-out ${
             sidebarOpen ? "w-64" : "w-16"
           }`}
@@ -250,7 +250,7 @@ export default function NotesPage() {
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((v) => !v)}
           />
-        </div>
+        </div> */}
 
         {/* MAIN CONTENT */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
