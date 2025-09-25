@@ -16,8 +16,20 @@ export function AuthProvider({ children }) {
     }
   });
 
+  // ✅ Immediately set token on first load
   useEffect(() => {
-    if (token) setAuthToken(token);
+    if (token) {
+      setAuthToken(token);
+    }
+  }, []);
+
+  // ✅ Keep updating if token changes
+  useEffect(() => {
+    if (token) {
+      setAuthToken(token);
+    } else {
+      setAuthToken(null);
+    }
   }, [token]);
 
   const login = ({ token, user }) => {

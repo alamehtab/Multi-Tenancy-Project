@@ -13,24 +13,27 @@ export default function NoteForm({ onCreate }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-3 mb-6 w-full max-w-xl mx-auto px-4"
+    >
       <input
         type="text"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="px-3 py-2 border rounded dark:bg-gray-700"
+        className="px-4 py-2 border rounded dark:bg-gray-700 text-sm sm:text-base"
       />
-      <input
-        type="text"
+      <textarea
         placeholder="Content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="px-3 py-2 border rounded dark:bg-gray-700"
+        rows={4}
+        className="px-4 py-2 border rounded dark:bg-gray-700 text-sm sm:text-base resize-none"
       />
       <button
         type="submit"
-        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm sm:text-base"
       >
         Add
       </button>
