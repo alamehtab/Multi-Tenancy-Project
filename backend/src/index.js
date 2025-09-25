@@ -10,7 +10,10 @@ const healthRoutes = require("./routes/health");
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://multi-tenancy-project.vercel.app", // replace with actual frontend domain
+  credentials: true
+}));
 app.use(express.json());
 
 // ✅ Routes
