@@ -3,6 +3,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { Edit, Trash2, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const UsersSection = () => {
     const { user } = useAuth();
@@ -14,8 +15,9 @@ const UsersSection = () => {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [deleteLoading, setDeleteLoading] = useState(null);
+    const [healthStatus, setHealthStatus] = useState({});
     const usersPerPage = 5;
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!user) return;
@@ -70,6 +72,31 @@ const UsersSection = () => {
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
+    useEffect(() => {
+        const fetchHealthStatus = async () => {
+            try {
+                const res = await api.get("/health");
+                const data = res.data;
+                const statusMap = {};
+                for (const u of currentUsers) {
+                    statusMap[u.tenant.slug] = data.status;
+                }
+                setHealthStatus(statusMap);
+            } catch (err) {
+                console.error("Health check failed", err);
+                const fallbackMap = {};
+                for (const u of currentUsers) {
+                    fallbackMap[u.tenant.slug] = "unknown";
+                }
+                setHealthStatus(fallbackMap);
+            }
+        };
+
+        if (currentUsers.length > 0) {
+            fetchHealthStatus();
+        }
+    }, [currentUsers]);
+
     const toggleSelectAll = () => {
         if (selectedUsers.length === currentUsers.length) {
             setSelectedUsers([]);
@@ -122,13 +149,13 @@ const UsersSection = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     );
-    
+
     if (error) return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full">
                 <div className="text-red-600 font-semibold mb-2">Error</div>
                 <p className="text-red-700">{error}</p>
-                <button 
+                <button
                     onClick={fetchMembers}
                     className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
                 >
@@ -137,7 +164,7 @@ const UsersSection = () => {
             </div>
         </div>
     );
-    
+
     if (users.length === 0) return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="text-center">
@@ -226,7 +253,7 @@ const UsersSection = () => {
                                 <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition">
                                     Bulk Actions
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => setSelectedUsers([])}
                                     className="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
                                 >
@@ -270,6 +297,9 @@ const UsersSection = () => {
                             <th scope="col" className="px-6 py-4 font-semibold text-center">
                                 Actions
                             </th>
+                            <th scope="col" className="px-6 py-4 font-semibold">
+                                Health Status
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -302,11 +332,10 @@ const UsersSection = () => {
                                 <td className="px-6 py-4 font-mono text-gray-700 text-sm">{u.email}</td>
                                 <td className="px-6 py-4">
                                     <span
-                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                                            u.role === "ADMIN"
-                                                ? "bg-blue-100 text-blue-700 border border-blue-200"
-                                                : "bg-green-100 text-green-700 border border-green-200"
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold ${u.role === "ADMIN"
+                                            ? "bg-blue-100 text-blue-700 border border-blue-200"
+                                            : "bg-green-100 text-green-700 border border-green-200"
+                                            }`}
                                     >
                                         {u.role}
                                     </span>
@@ -314,11 +343,10 @@ const UsersSection = () => {
                                 <td className="px-6 py-4">
                                     {u.role === "MEMBER" ? (
                                         <button
-                                            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105 ${
-                                                u.tenant.plan === "PRO"
-                                                    ? "bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border border-green-200"
-                                                    : "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border border-gray-200"
-                                            }`}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105 ${u.tenant.plan === "PRO"
+                                                ? "bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border border-green-200"
+                                                : "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border border-gray-200"
+                                                }`}
                                             onClick={() => togglePlan(u.tenant.slug)}
                                         >
                                             {u.tenant.plan} {u.tenant.plan === "FREE" ? "→ Upgrade" : "→ Downgrade"}
@@ -329,14 +357,14 @@ const UsersSection = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex justify-center space-x-2">
-                                        <button 
-    onClick={() => navigate('/edit-user', { state: { user: u } })}
-    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-    title="Edit User"
->
-    <Edit size={16} />
-</button>
-                                        <button 
+                                        <button
+                                            onClick={() => navigate('/edit-user', { state: { user: u } })}
+                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                            title="Edit User"
+                                        >
+                                            <Edit size={16} />
+                                        </button>
+                                        <button
                                             onClick={() => handleDeleteUser(u.id, u.email)}
                                             disabled={deleteLoading === u.id}
                                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
@@ -348,13 +376,23 @@ const UsersSection = () => {
                                                 <Trash2 size={16} />
                                             )}
                                         </button>
-                                        <button 
+                                        <button
                                             className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
                                             title="View Details"
                                         >
                                             <Eye size={16} />
                                         </button>
                                     </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span
+                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold ${healthStatus[u.tenant.slug] === "ok"
+                                                ? "bg-green-100 text-green-700 border border-green-200"
+                                                : "bg-red-100 text-red-700 border border-red-200"
+                                            }`}
+                                    >
+                                        {healthStatus[u.tenant.slug] || "Checking..."}
+                                    </span>
                                 </td>
                             </tr>
                         ))}
@@ -393,11 +431,10 @@ const UsersSection = () => {
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`px-3 py-1 text-sm font-medium rounded-lg transition ${
-                                        currentPage === page
-                                            ? "bg-blue-600 text-white"
-                                            : "text-gray-700 hover:bg-gray-100"
-                                    }`}
+                                    className={`px-3 py-1 text-sm font-medium rounded-lg transition ${currentPage === page
+                                        ? "bg-blue-600 text-white"
+                                        : "text-gray-700 hover:bg-gray-100"
+                                        }`}
                                 >
                                     {page}
                                 </button>
