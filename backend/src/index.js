@@ -11,7 +11,9 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(cors({
-  origin: "https://multi-tenancy-project.vercel.app", // replace with actual frontend domain
+  origin: "https://multi-tenancy-project.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 app.use(express.json());
