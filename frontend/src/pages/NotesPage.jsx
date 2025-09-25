@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import api from "../api";
 import {
   LogOut,
   Menu,
@@ -17,6 +16,9 @@ import EditUserPage from "./EditUserPage";
 import UpgradeBanner from "../components/UpgradeBanner";
 import NoteForm from "../components/NoteForm";
 import NotesList from "../components/NotesList";
+import { createNote, deleteNote, getNotes } from "../../api/notes";
+import { toggleTenantPlan } from "../../api/tenants";
+import api from "../../api/api";
 
 export default function NotesPage() {
   const { token, user, logout } = useAuth();
@@ -44,9 +46,10 @@ export default function NotesPage() {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/notes");
+      const res = await getNotes();
       // show only this user's notes
-      const userNotes = res.data.filter((n) => n.user?.id === user.id);
+      const allNotes = Array.isArray(res.data) ? res.data : res.data.notes || [];
+      const userNotes = allNotes.filter((n) => n.user?.id === user.id);
       setNotes(userNotes);
 
       if (user.role !== "ADMIN") {
@@ -69,7 +72,7 @@ export default function NotesPage() {
   // note create / delete / update / upgrade
   const handleCreate = async ({ title, content }) => {
     try {
-      const res = await api.post("/notes", { title, content });
+      const res = await createNote({ title, content });
       setNotes((prev) => [...prev, res.data]);
       if (user.role !== "ADMIN" && notes.length + 1 >= 3) {
         setLimitReached(true);
@@ -85,7 +88,7 @@ export default function NotesPage() {
 
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/notes/${id}`);
+      await deleteNote(id);
       const updated = notes.filter((n) => n.id !== id);
       setNotes(updated);
       if (user.role !== "ADMIN" && updated.length < 3) {
@@ -104,7 +107,7 @@ export default function NotesPage() {
 
   const handleUpgrade = async () => {
     try {
-      await api.post(`/tenants/${user.tenantSlug}/upgrade`);
+      await toggleTenantPlan(slug);
       setLimitReached(false);
       fetchNotes();
     } catch (err) {
@@ -213,8 +216,8 @@ export default function NotesPage() {
                     to={item.to}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`block px-3 py-2 rounded hover:bg-gray-100 ${location.pathname === item.to
-                        ? "bg-gray-100 font-medium"
-                        : ""
+                      ? "bg-gray-100 font-medium"
+                      : ""
                       }`}
                   >
                     {item.label}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { Edit, Trash2, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { deleteTenantUser, getAllUsers, getTenantUsers, toggleTenantPlan } from "../../api/tenants";
+import { checkHealth } from "../../api/health";
 
 const UsersSection = () => {
     const { user } = useAuth();
@@ -31,9 +31,10 @@ const UsersSection = () => {
         try {
             let res;
             if (user.role === "ADMIN") {
-                res = await api.get("/tenants/all-users");
+                res = await getAllUsers();
+                setUsers(Array.isArray(res.data) ? res.data : []);
             } else if (user.tenantSlug) {
-                res = await api.get(`/tenants/${user.tenantSlug}/users`);
+                res = await getTenantUsers(user.tenantSlug);;
             } else {
                 throw new Error("User role or tenant information missing.");
             }
@@ -58,13 +59,16 @@ const UsersSection = () => {
         }
     };
 
-    const filteredUsers = users.filter((u) => {
-        const matchesSearch =
-            u.email.toLowerCase().includes(search.toLowerCase()) ||
-            (u.tenant?.name && u.tenant.name.toLowerCase().includes(search.toLowerCase()));
-        const matchesRole = roleFilter === "ALL" ? true : u.role === roleFilter;
-        return matchesSearch && matchesRole;
-    });
+    const filteredUsers = Array.isArray(users)
+        ? users.filter((u) => {
+            const matchesSearch =
+                u.email.toLowerCase().includes(search.toLowerCase()) ||
+                (u.tenant?.name &&
+                    u.tenant.name.toLowerCase().includes(search.toLowerCase()));
+            const matchesRole = roleFilter === "ALL" ? true : u.role === roleFilter;
+            return matchesSearch && matchesRole;
+        })
+        : [];
 
     // Pagination
     const indexOfLastUser = currentPage * usersPerPage;
@@ -75,7 +79,7 @@ const UsersSection = () => {
     useEffect(() => {
         const fetchHealthStatus = async () => {
             try {
-                const res = await api.get("/health");
+                const res = await checkHealth();
                 const data = res.data;
                 const statusMap = {};
                 for (const u of currentUsers) {
@@ -92,9 +96,7 @@ const UsersSection = () => {
             }
         };
 
-        if (currentUsers.length > 0) {
-            fetchHealthStatus();
-        }
+        fetchHealthStatus();
     }, [currentUsers]);
 
     const toggleSelectAll = () => {
@@ -113,7 +115,7 @@ const UsersSection = () => {
 
     const togglePlan = async (tenantSlug) => {
         try {
-            const res = await api.post(`/tenants/${tenantSlug}/toggle-plan`);
+            const res = await toggleTenantPlan(tenantSlug); // ✅ fixed
             setUsers((prev) =>
                 prev.map((u) =>
                     u.tenant.slug === tenantSlug
@@ -126,23 +128,29 @@ const UsersSection = () => {
         }
     };
 
-    const handleDeleteUser = async (userId, userEmail) => {
-        if (!window.confirm(`Are you sure you want to delete user ${userEmail}?`)) {
-            return;
-        }
+    const handleDeleteUser = async (userId, tenantSlug, userEmail) => {
+  if (!tenantSlug) {
+    console.error("Tenant slug is missing");
+    alert("Cannot delete user: tenant information is missing.");
+    return;
+  }
 
-        setDeleteLoading(userId);
-        try {
-            await api.delete(`/tenants/${user.tenantSlug}/users/${userId}`);
-            setUsers(prev => prev.filter(u => u.id !== userId));
-            setSelectedUsers(prev => prev.filter(id => id !== userId));
-        } catch (err) {
-            console.error("Error deleting user:", err);
-            alert(err.response?.data?.error || "Failed to delete user");
-        } finally {
-            setDeleteLoading(null);
-        }
-    };
+  if (!window.confirm(`Are you sure you want to delete user ${userEmail}?`)) {
+    return;
+  }
+
+  setDeleteLoading(userId);
+  try {
+    await deleteTenantUser(tenantSlug, userId); // ✅ now tenantSlug is defined
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+    setSelectedUsers((prev) => prev.filter((id) => id !== userId));
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    alert(err.response?.data?.error || "Failed to delete user");
+  } finally {
+    setDeleteLoading(null);
+  }
+};
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
@@ -365,7 +373,7 @@ const UsersSection = () => {
                                             <Edit size={16} />
                                         </button>
                                         <button
-                                            onClick={() => handleDeleteUser(u.id, u.email)}
+                                            onClick={() => handleDeleteUser(u.id, u.tenant?.slug, u.email)}
                                             disabled={deleteLoading === u.id}
                                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                                             title="Delete User"
@@ -387,8 +395,8 @@ const UsersSection = () => {
                                 <td className="px-6 py-4">
                                     <span
                                         className={`px-3 py-1.5 rounded-full text-xs font-semibold ${healthStatus[u.tenant.slug] === "ok"
-                                                ? "bg-green-100 text-green-700 border border-green-200"
-                                                : "bg-red-100 text-red-700 border border-red-200"
+                                            ? "bg-green-100 text-green-700 border border-green-200"
+                                            : "bg-red-100 text-red-700 border border-red-200"
                                             }`}
                                     >
                                         {healthStatus[u.tenant.slug] || "Checking..."}

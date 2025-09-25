@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import api from "../api";
 import { ArrowLeft, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { inviteTenantUser } from "../../api/tenants";
 
 const AddUserPage = () => {
   const { user } = useAuth();
@@ -20,10 +20,7 @@ const AddUserPage = () => {
     setError("");
 
     try {
-      const res = await api.post(
-        `/tenants/${user.tenantSlug}/invite`,
-        formData
-      );
+      const res = await inviteTenantUser(user.tenantSlug, formData);
       alert("User invited successfully!");
       setFormData({ email: "", role: "MEMBER" });
       navigate("/users");

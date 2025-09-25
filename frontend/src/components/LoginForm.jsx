@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import api from "../api";
+import { setAuthToken } from "../../api/api";
+import { loginUser } from "../../api/auth";
 
 export default function LoginForm() {
     const { login } = useAuth();
@@ -13,9 +14,11 @@ export default function LoginForm() {
         setError("");
 
         try {
-            const res = await api.post("/auth/login", { email, password });
+            const res = await loginUser({ email, password });
             const { token, user } = res.data;
-            login({ token, user });
+
+            setAuthToken(token); // ✅ sets token for future requests
+            login({ token, user }); // your existing login handler
         } catch (err) {
             console.error(err);
             if (err.response?.status === 401) {

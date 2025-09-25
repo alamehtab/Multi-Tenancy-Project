@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
-import api from "../api";
+import { updateNote } from "../../api/notes";
 
 export default function NotesList({ notes, onDelete, onUpdate }) {
   const [editingId, setEditingId] = useState(null);
@@ -24,7 +24,7 @@ export default function NotesList({ notes, onDelete, onUpdate }) {
   const saveEdit = async (id) => {
     try {
       setLoadingId(id);
-      const res = await api.put(`/notes/${Number(id)}`, {
+      const res = await updateNote(id, {
         title: editTitle,
         content: editContent,
       });

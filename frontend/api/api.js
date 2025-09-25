@@ -1,14 +1,13 @@
+// src/api/api.js
 import axios from "axios";
 
-const API_URL = "http://localhost:3000"; // backend URL
+const API_URL = "/api";
 
-// Axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL, // ✅ relative path for Vercel
   headers: { "Content-Type": "application/json" },
 });
 
-// Named export to set the auth token dynamically
 export const setAuthToken = (token) => {
   if (token) {
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -17,7 +16,6 @@ export const setAuthToken = (token) => {
   }
 };
 
-// Optional: interceptors for logging errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {

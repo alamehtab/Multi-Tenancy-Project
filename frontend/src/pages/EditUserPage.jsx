@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import api from "../api";
 import {
   ArrowLeft,
   User,
@@ -9,6 +8,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getAllUsers, getTenantUsers, updateTenantUser } from "../../api/tenants";
 
 const EditUserPage = () => {
   const { user } = useAuth();
@@ -38,9 +38,9 @@ const EditUserPage = () => {
       setUsersLoading(true);
       let res;
       if (user.role === "ADMIN") {
-        res = await api.get("/tenants/all-users");
+        res = await getAllUsers()
       } else {
-        res = await api.get(`/tenants/${user.tenantSlug}/users`);
+        res = await getTenantUsers(user.tenantSlug);
       }
       setUsers(res.data);
     } catch (err) {
@@ -97,10 +97,7 @@ const EditUserPage = () => {
     setSuccess("");
 
     try {
-      const response = await api.put(
-        `/tenants/${user.tenantSlug}/users/${selectedUserId}`,
-        formData
-      );
+      const response = await updateTenantUser(user.tenantSlug, selectedUserId, formData);
 
       setSuccess(response.data.message);
       setUsers((prev) =>
@@ -189,7 +186,8 @@ const EditUserPage = () => {
             </div>
           ) : (
             <div className="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
-              {users.map((u) => (
+              {Array.isArray(users) &&
+              users.map((u) => (
                 <button
                   key={u.id}
                   onClick={() => handleUserSelect(u.id)}

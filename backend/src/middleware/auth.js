@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 
-// ✅ Verify JWT and attach user
 exports.authenticate = (req, res, next) => {
   const header = req.headers["authorization"];
   if (!header) return res.status(401).json({ error: "No token provided" });
@@ -15,7 +14,6 @@ exports.authenticate = (req, res, next) => {
   });
 };
 
-// ✅ Require specific role
 exports.requireRole = (role) => {
   return (req, res, next) => {
     if (req.user.role !== role) {
