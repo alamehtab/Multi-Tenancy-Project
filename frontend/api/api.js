@@ -1,14 +1,12 @@
-// src/api/api.js
 import axios from "axios";
 
 const API_URL = "https://multi-tenancy-backend-production.up.railway.app";
 
 const api = axios.create({
-  baseURL: API_URL, // ✅ relative path for Vercel
+  baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true 
+  withCredentials: true
 });
-
 export const setAuthToken = (token) => {
   if (token) {
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -16,7 +14,6 @@ export const setAuthToken = (token) => {
     delete api.defaults.headers.common["Authorization"];
   }
 };
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {

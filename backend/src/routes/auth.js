@@ -7,7 +7,6 @@ const { JWT_SECRET } = require("../config");
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// ✅ Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await prisma.user.findUnique({

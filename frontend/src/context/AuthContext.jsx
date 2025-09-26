@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import  { setAuthToken } from "../../api/api";
+import { setAuthToken } from "../../api/api";
 
 const AuthContext = createContext();
 
@@ -15,15 +15,11 @@ export function AuthProvider({ children }) {
       return null;
     }
   });
-
-  // ✅ Immediately set token on first load
   useEffect(() => {
     if (token) {
       setAuthToken(token);
     }
   }, []);
-
-  // ✅ Keep updating if token changes
   useEffect(() => {
     if (token) {
       setAuthToken(token);

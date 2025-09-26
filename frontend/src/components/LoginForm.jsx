@@ -12,13 +12,11 @@ export default function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-
         try {
             const res = await loginUser({ email, password });
             const { token, user } = res.data;
-
-            setAuthToken(token); // ✅ sets token for future requests
-            login({ token, user }); // your existing login handler
+            setAuthToken(token);
+            login({ token, user });
         } catch (err) {
             console.error(err);
             if (err.response?.status === 401) {
@@ -28,12 +26,9 @@ export default function LoginForm() {
             }
         }
     };
-
     return (
         <section className=" dark:bg-gray-900 min-h-screen flex items-center justify-center px-6 py-8">
             <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-lg shadow dark:bg-gray-800 dark:border dark:border-gray-700 overflow-hidden">
-
-                {/* Left Side: Illustration */}
                 <div className="hidden md:flex md:w-2xl bg-blue-600 relative">
                     <img
                         src="https://plus.unsplash.com/premium_photo-1674582744373-c0805c281744?q=80&w=1481&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -41,17 +36,12 @@ export default function LoginForm() {
                         className="absolute inset-0 w-full h-full object-cover"
                     />
                 </div>
-
-                {/* Right Side: Login Form */}
                 <div className="w-full md:w-2xl p-6 sm:p-8 space-y-6">
-
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center md:text-left">
                         Sign in to your account
                     </h1>
-
                     <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                         {error && <p className="text-red-500 text-sm">{error}</p>}
-
                         <div>
                             <label
                                 htmlFor="email"
@@ -70,7 +60,6 @@ export default function LoginForm() {
                                 required
                             />
                         </div>
-
                         <div>
                             <label
                                 htmlFor="password"
@@ -89,7 +78,6 @@ export default function LoginForm() {
                                 required
                             />
                         </div>
-
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <input
@@ -111,7 +99,6 @@ export default function LoginForm() {
                                 Forgot password?
                             </a>
                         </div>
-
                         <button
                             type="submit"
                             className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

@@ -1,5 +1,3 @@
-// src/api/middleware.js
-
 /**
  * Get the current user from localStorage
  * @returns {Object|null}
@@ -19,7 +17,7 @@ export const isAuthenticated = () => {
 
 /**
  * Check if user has a specific role
- * @param {string} role - "ADMIN" or "MEMBER"
+ * @param {string} role
  * @returns {boolean}
  */
 export const hasRole = (role) => {

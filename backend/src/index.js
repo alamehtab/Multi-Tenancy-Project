@@ -30,14 +30,12 @@ app.use(
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
+  res.send("Backend is running");
 });
-// ✅ Routes
 app.use("/auth", authRoutes);
 app.use("/notes", notesRoutes);
 app.use("/tenants", tenantRoutes);
 app.use("/health", healthRoutes);
 
-// ✅ Start server
-const PORT = process.env.PORT ;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

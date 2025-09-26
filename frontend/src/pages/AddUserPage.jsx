@@ -40,7 +40,6 @@ const AddUserPage = () => {
 
   return (
     <div className="w-full px-4 py-6 max-w-3xl mx-auto">
-      {/* Header */}
       <div className="mb-6">
         <button
           onClick={() => navigate("/users")}
@@ -61,8 +60,6 @@ const AddUserPage = () => {
           Invite a new user to your tenant
         </p>
       </div>
-
-      {/* Form */}
       <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -70,8 +67,6 @@ const AddUserPage = () => {
               <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
-
-          {/* Email Field */}
           <div>
             <label
               htmlFor="email"
@@ -90,8 +85,6 @@ const AddUserPage = () => {
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm sm:text-base"
             />
           </div>
-
-          {/* Role Field */}
           <div>
             <label
               htmlFor="role"
@@ -113,8 +106,6 @@ const AddUserPage = () => {
               Admins have full access to manage users and settings.
             </p>
           </div>
-
-          {/* Submit Button */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               type="button"
@@ -143,8 +134,6 @@ const AddUserPage = () => {
           </div>
         </form>
       </div>
-
-      {/* Info Card */}
       <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
         <h3 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">
           About User Invitations

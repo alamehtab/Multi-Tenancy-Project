@@ -70,7 +70,6 @@ const UsersSection = () => {
         })
         : [];
 
-    // Pagination
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -115,7 +114,7 @@ const UsersSection = () => {
 
     const togglePlan = async (tenantSlug) => {
         try {
-            const res = await toggleTenantPlan(tenantSlug); // ✅ fixed
+            const res = await toggleTenantPlan(tenantSlug);
             setUsers((prev) =>
                 prev.map((u) =>
                     u.tenant.slug === tenantSlug
@@ -129,28 +128,28 @@ const UsersSection = () => {
     };
 
     const handleDeleteUser = async (userId, tenantSlug, userEmail) => {
-  if (!tenantSlug) {
-    console.error("Tenant slug is missing");
-    alert("Cannot delete user: tenant information is missing.");
-    return;
-  }
+        if (!tenantSlug) {
+            console.error("Tenant slug is missing");
+            alert("Cannot delete user: tenant information is missing.");
+            return;
+        }
 
-  if (!window.confirm(`Are you sure you want to delete user ${userEmail}?`)) {
-    return;
-  }
+        if (!window.confirm(`Are you sure you want to delete user ${userEmail}?`)) {
+            return;
+        }
 
-  setDeleteLoading(userId);
-  try {
-    await deleteTenantUser(tenantSlug, userId); // ✅ now tenantSlug is defined
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-    setSelectedUsers((prev) => prev.filter((id) => id !== userId));
-  } catch (err) {
-    console.error("Error deleting user:", err);
-    alert(err.response?.data?.error || "Failed to delete user");
-  } finally {
-    setDeleteLoading(null);
-  }
-};
+        setDeleteLoading(userId);
+        try {
+            await deleteTenantUser(tenantSlug, userId);
+            setUsers((prev) => prev.filter((u) => u.id !== userId));
+            setSelectedUsers((prev) => prev.filter((id) => id !== userId));
+        } catch (err) {
+            console.error("Error deleting user:", err);
+            alert(err.response?.data?.error || "Failed to delete user");
+        } finally {
+            setDeleteLoading(null);
+        }
+    };
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
@@ -185,18 +184,13 @@ const UsersSection = () => {
 
     return (
         <div className="w-full p-6">
-            {/* Header */}
             <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
                 <p className="text-gray-600">Manage your team members and their permissions</p>
             </div>
-
-            {/* Top Bar with Filters & Search */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
-                    {/* Left Side - Filters */}
                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                        {/* Role Filter */}
                         <div className="flex flex-col">
                             <label className="text-sm font-medium text-gray-700 mb-1">Filter by Role</label>
                             <select
@@ -213,11 +207,7 @@ const UsersSection = () => {
                             </select>
                         </div>
                     </div>
-
-                    {/* Horizontal Rule for medium screens */}
                     <hr className="lg:hidden w-full border-gray-200" />
-
-                    {/* Right Side - Search */}
                     <div className="flex flex-col w-full lg:w-auto">
                         <label className="text-sm font-medium text-gray-700 mb-1">Search Users</label>
                         <div className="relative">
@@ -249,8 +239,6 @@ const UsersSection = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Selected Users Actions */}
                 {selectedUsers.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex items-center justify-between">
@@ -272,8 +260,6 @@ const UsersSection = () => {
                     </div>
                 )}
             </div>
-
-            {/* Users Table */}
             <div className="bg-white rounded-lg w-8xl border border-gray-200 overflow-x-auto shadow-sm">
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-white uppercase bg-gradient-to-r from-blue-600 to-blue-700">
@@ -415,8 +401,6 @@ const UsersSection = () => {
                     </div>
                 )}
             </div>
-
-            {/* Pagination */}
             {totalPages > 1 && (
                 <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 mt-6 bg-white rounded-lg border border-gray-200 p-4">
                     <div className="text-sm text-gray-700">

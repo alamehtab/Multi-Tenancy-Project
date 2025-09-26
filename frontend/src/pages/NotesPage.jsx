@@ -28,26 +28,18 @@ export default function NotesPage() {
   const [notes, setNotes] = useState([]);
   const [limitReached, setLimitReached] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // Control desktop sidebar open/collapse (md+ only)
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Control mobile menu dropdown
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // apply auth header
   useEffect(() => {
     if (token) {
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
   }, [token]);
-
-  // fetch notes
   const fetchNotes = async () => {
     try {
       setLoading(true);
       const res = await getNotes();
-      // show only this user's notes
       const allNotes = Array.isArray(res.data) ? res.data : res.data.notes || [];
       const userNotes = allNotes.filter((n) => n.user?.id === user.id);
       setNotes(userNotes);
@@ -69,7 +61,6 @@ export default function NotesPage() {
     fetchNotes();
   }, []);
 
-  // note create / delete / update / upgrade
   const handleCreate = async ({ title, content }) => {
     try {
       const res = await createNote({ title, content });
@@ -115,7 +106,6 @@ export default function NotesPage() {
     }
   };
 
-  // choose which page to render
   const renderContent = () => {
     if (location.pathname === "/users" && user.role === "ADMIN") {
       return <UsersSection />;
@@ -126,7 +116,6 @@ export default function NotesPage() {
     if (location.pathname === "/edit-user" && user.role === "ADMIN") {
       return <EditUserPage />;
     }
-    // default notes page
     return (
       <>
         {limitReached && (
@@ -144,8 +133,6 @@ export default function NotesPage() {
       </>
     );
   };
-
-  // list of nav items for mobile & desktop
   const navItems = [
     { label: "Notes", to: "/noteslist", show: true },
     { label: "Users", to: "/users", show: user.role === "ADMIN" },
@@ -155,11 +142,9 @@ export default function NotesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* ===== HEADER ===== */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-16 flex items-center justify-between">
-            {/* logo / title */}
             <button
               className="text-lg font-bold text-gray-800 md:hidden focus:outline-none"
               onClick={() => navigate("/noteslist")}
@@ -190,8 +175,6 @@ export default function NotesPage() {
                 <LogOut />
               </button>
             </div>
-
-            {/* mobile menu toggle */}
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen((v) => !v)}
@@ -203,8 +186,6 @@ export default function NotesPage() {
             </div>
           </div>
         </div>
-
-        {/* MOBILE DROPDOWN */}
         {mobileMenuOpen && (
           <nav className="md:hidden bg-white border-t border-gray-200">
             <div className="px-4 py-2 space-y-1">
@@ -239,7 +220,6 @@ export default function NotesPage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* MAIN CONTENT */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {loading ? (
             <div className="flex h-full justify-center items-center">

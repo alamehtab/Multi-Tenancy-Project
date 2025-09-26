@@ -126,7 +126,6 @@ const EditUserPage = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6">
-      {/* Header */}
       <div className="mb-6">
         <button
           onClick={() => navigate("/users")}
@@ -150,8 +149,6 @@ const EditUserPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Alerts */}
       {success && (
         <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center text-sm sm:text-base">
           <CheckCircle className="text-green-500 mr-2" size={20} />
@@ -164,10 +161,7 @@ const EditUserPage = () => {
           <span className="text-red-700 font-medium">{error}</span>
         </div>
       )}
-
-      {/* Main Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* User List */}
         <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
           <h3 className="font-semibold text-gray-700 mb-4 text-lg sm:text-xl">
             Select User to Edit
@@ -187,50 +181,46 @@ const EditUserPage = () => {
           ) : (
             <div className="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
               {Array.isArray(users) &&
-              users.map((u) => (
-                <button
-                  key={u.id}
-                  onClick={() => handleUserSelect(u.id)}
-                  className={`w-full p-4 border rounded-lg text-left transition-all ${
-                    selectedUserId === u.id
-                      ? "border-blue-500 bg-blue-50 shadow-sm"
-                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-gray-900 truncate">
-                      {u.email}
-                    </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold border ${getRoleBadgeColor(
-                        u.role
-                      )}`}
-                    >
-                      {u.role}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    Tenant: {u.tenant?.name || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Plan:{" "}
-                    <span
-                      className={`font-medium ${
-                        u.tenant?.plan === "PRO"
-                          ? "text-green-600"
-                          : "text-gray-600"
+                users.map((u) => (
+                  <button
+                    key={u.id}
+                    onClick={() => handleUserSelect(u.id)}
+                    className={`w-full p-4 border rounded-lg text-left transition-all ${selectedUserId === u.id
+                        ? "border-blue-500 bg-blue-50 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                       }`}
-                    >
-                      {u.tenant?.plan || "N/A"}
-                    </span>
-                  </p>
-                </button>
-              ))}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium text-gray-900 truncate">
+                        {u.email}
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold border ${getRoleBadgeColor(
+                          u.role
+                        )}`}
+                      >
+                        {u.role}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      Tenant: {u.tenant?.name || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Plan:{" "}
+                      <span
+                        className={`font-medium ${u.tenant?.plan === "PRO"
+                            ? "text-green-600"
+                            : "text-gray-600"
+                          }`}
+                      >
+                        {u.tenant?.plan || "N/A"}
+                      </span>
+                    </p>
+                  </button>
+                ))}
             </div>
           )}
         </div>
-
-        {/* Edit Panel */}
         <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
           {selectedUserId ? (
             <>
@@ -258,9 +248,7 @@ const EditUserPage = () => {
                   )}
                 </div>
               </div>
-
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email */}
                 <div>
                   <label
                     htmlFor="email"
@@ -279,8 +267,6 @@ const EditUserPage = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm sm:text-base"
                   />
                 </div>
-
-                {/* Role */}
                 <div>
                   <label
                     htmlFor="role"
@@ -306,8 +292,6 @@ const EditUserPage = () => {
                     their own notes (with plan limits).
                   </p>
                 </div>
-
-                {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
                   <button
                     type="button"
@@ -353,8 +337,6 @@ const EditUserPage = () => {
           )}
         </div>
       </div>
-
-      {/* Guidelines */}
       <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-6">
         <h3 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
           Editing Guidelines

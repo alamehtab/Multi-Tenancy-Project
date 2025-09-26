@@ -1,4 +1,3 @@
-// src/api/notes.js
 import api from "./api";
 
 /**

@@ -1,4 +1,3 @@
-// src/api/tenants.js
 import api from "./api";
 
 /**

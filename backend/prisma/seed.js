@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   const password = await bcrypt.hash("password", 10);
 
-  // ✅ Create tenants with Free plan by default
   const acme = await prisma.tenant.upsert({
     where: { slug: "acme" },
     update: {},
@@ -19,7 +18,6 @@ async function main() {
     create: { name: "Globex", slug: "globex", plan: "FREE" }
   });
 
-  // ✅ Create test users
   await prisma.user.upsert({
     where: { email: "admin@acme.test" },
     update: {},

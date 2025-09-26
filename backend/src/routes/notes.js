@@ -5,7 +5,6 @@ const { authenticate } = require("../middleware/auth");
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// ✅ Create Note
 router.post("/", authenticate, async (req, res) => {
   try {
     const { title, content } = req.body;
@@ -20,7 +19,6 @@ router.post("/", authenticate, async (req, res) => {
     });
     if (!tenant) return res.status(404).json({ error: "Tenant not found" });
 
-    // Free plan limit for tenant (tenant-wide)
     if (tenant.plan === "FREE" && user.role !== "ADMIN") {
       const tenantNotesCount = await prisma.note.count({
         where: { tenantId: user.tenantId },
@@ -48,7 +46,6 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// ✅ List Notes
 router.get("/", authenticate, async (req, res) => {
   try {
     let notes;
@@ -73,7 +70,6 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Retrieve Note
 router.get("/:id", authenticate, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
@@ -91,7 +87,6 @@ router.get("/:id", authenticate, async (req, res) => {
   res.json(note);
 });
 
-// ✅ Update Note
 router.put("/:id", authenticate, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
@@ -118,7 +113,6 @@ router.put("/:id", authenticate, async (req, res) => {
   res.json(updated);
 });
 
-// ✅ Delete Note
 router.delete("/:id", authenticate, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });

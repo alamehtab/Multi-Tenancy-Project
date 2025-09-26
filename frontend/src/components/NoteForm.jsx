@@ -11,7 +11,6 @@ export default function NoteForm({ onCreate }) {
     setTitle("");
     setContent("");
   };
-
   return (
     <form
       onSubmit={handleSubmit}

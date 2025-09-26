@@ -6,10 +6,6 @@ const { authenticate, requireRole } = require("../middleware/auth");
 const router = express.Router();
 const prisma = new PrismaClient();
 
-/**
- * ✅ Get ALL users (Admins only)
- * GET /tenants/all-users
- */
 router.get("/all-users", authenticate, requireRole("ADMIN"), async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -28,10 +24,6 @@ router.get("/all-users", authenticate, requireRole("ADMIN"), async (req, res) =>
   }
 });
 
-/**
- * ✅ Get tenant info (Admins only)
- * GET /tenants/:slug
- */
 router.get("/:slug", authenticate, requireRole("ADMIN"), async (req, res) => {
   const { slug } = req.params;
 
@@ -48,10 +40,6 @@ router.get("/:slug", authenticate, requireRole("ADMIN"), async (req, res) => {
   }
 });
 
-/**
- * ✅ Toggle subscription plan (Admins only)
- * POST /tenants/:slug/toggle-plan
- */
 router.post("/:slug/toggle-plan", authenticate, requireRole("ADMIN"), async (req, res) => {
   const { slug } = req.params;
 
@@ -89,9 +77,8 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
   }
 
   try {
-    // Check if user exists and belongs to the tenant
     const existingUser = await prisma.user.findFirst({
-      where: { 
+      where: {
         id: parseInt(userId),
         tenant: { slug }
       }
@@ -100,8 +87,6 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
     if (!existingUser) {
       return res.status(404).json({ error: "User not found in this tenant" });
     }
-
-    // Check if email is already taken by another user
     if (email !== existingUser.email) {
       const emailExists = await prisma.user.findFirst({
         where: {
@@ -115,8 +100,6 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
         return res.status(400).json({ error: "Email already exists in this tenant" });
       }
     }
-
-    // Prevent demoting the last admin
     if (existingUser.role === "ADMIN" && role === "MEMBER") {
       const adminCount = await prisma.user.count({
         where: {
@@ -129,8 +112,6 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
         return res.status(400).json({ error: "Cannot demote the last admin" });
       }
     }
-
-    // Update the user
     const updatedUser = await prisma.user.update({
       where: { id: parseInt(userId) },
       data: {
@@ -144,7 +125,6 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
         tenant: { select: { name: true, slug: true, plan: true } }
       }
     });
-
     res.json({
       message: "User updated successfully",
       user: updatedUser
@@ -155,10 +135,6 @@ router.put("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (re
   }
 });
 
-/**
- * ✅ Invite user (Admins only, within tenant)
- * POST /tenants/:slug/invite
- */
 router.post("/:slug/invite", authenticate, requireRole("ADMIN"), async (req, res) => {
   const { slug } = req.params;
   const { email, role } = req.body;
@@ -192,12 +168,6 @@ router.post("/:slug/invite", authenticate, requireRole("ADMIN"), async (req, res
   }
 });
 
-/**
- * ✅ List users of a tenant
- * GET /tenants/:slug/users
- * - Admins can view any tenant
- * - Non-admins can only view their own tenant
- */
 router.get("/:slug/users", authenticate, async (req, res) => {
   const { slug } = req.params;
 
@@ -223,10 +193,6 @@ router.get("/:slug/users", authenticate, async (req, res) => {
   }
 });
 
-/**
- * ✅ Delete user (Admins only within tenant)
- * DELETE /tenants/:slug/users/:userId
- */
 router.delete("/:slug/users/:userId", authenticate, requireRole("ADMIN"), async (req, res) => {
   const { slug, userId } = req.params;
 

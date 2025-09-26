@@ -8,7 +8,6 @@ exports.authenticate = (req, res, next) => {
   const token = header.split(" ")[1];
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: "Invalid token" });
-    // user should have: { id, email, role, tenantId, tenantSlug }
     req.user = user;
     next();
   });

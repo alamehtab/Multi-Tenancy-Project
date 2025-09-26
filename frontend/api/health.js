@@ -1,4 +1,3 @@
-// src/api/health.js
 import api from "./api";
 
 /**
