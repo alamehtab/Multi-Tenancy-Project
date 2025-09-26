@@ -10,10 +10,23 @@ const healthRoutes = require("./routes/health");
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors({
-  origin: "https://multi-tenancy-project.vercel.app",
-  credentials: true
-}));
+const allowedOrigins = [
+  "https://multi-tenancy-project.vercel.app",
+  "https://multi-tenancy-project-aqn6iic3u-mehtab-alams-projects-b6c495d4.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
